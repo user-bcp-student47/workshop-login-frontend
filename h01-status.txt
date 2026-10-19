@@ -1,0 +1,36 @@
+ M package.json
+ M src/app/dashboard/dashboard.component.ts
+ M src/app/login/login.component.ts
+ M src/app/utils/legacy-format.spec.ts
+ M src/app/utils/legacy-format.ts
+?? HALLAZGOS.md
+?? PLAN.md
+?? TESTING.md
+?? TESTS_ANTES.md
+?? TESTS_DESPUES.md
+?? audit-after.json
+?? audit-before.json
+?? docs/ENDPOINTS.md
+?? docs/TESTING.md
+?? h01-after.exit.txt
+?? h01-after.log
+?? h01-before.exit.txt
+?? h01-before.log
+?? h01-build.exit.txt
+?? h01-build.log
+?? h01-coverage.exit.txt
+?? h01-coverage.log
+?? h01-status.txt
+?? package-lock.json
+?? review-diff-main.patch
+?? review-new-files.txt
+?? review-status.txt
+?? src/app/dashboard/dashboard.component.spec.ts
+?? src/app/login/login.component.spec.ts
+?? src/app/models/
+?? src/app/services/
+?? src/app/utils/api-error.spec.ts
+?? src/app/utils/api-error.ts
+?? src/environments/
+?? testing-coverage.exit.txt
+?? testing-coverage.log

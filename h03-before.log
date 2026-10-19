@@ -1,0 +1,127 @@
+
+> workshop-login-frontend@0.1.0 test
+> vitest run src/app/login/login.component.spec.ts
+
+
+[1m[46m RUN [49m[22m [36mv3.2.4 [39m[90mC:/Users/Usuario/Documents/T16628-jerson-navarro-huerta/reqflow-workspace/workshop-login-frontend[39m
+
+ [31m❯[39m src/app/login/login.component.spec.ts [2m([22m[2m27 tests[22m[2m | [22m[31m10 failed[39m[2m)[22m[32m 26[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mdelegates original credentials and preferences before navigating on success[32m 3[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mkeeps busy true and does not navigate until authentication completes[32m 0[2mms[22m[39m
+[31m   [31m×[31m LoginComponent[2m > [22mrejects an empty username (null) without calling the service[39m[32m 5[2mms[22m[39m
+[31m     → expected '<strong>Ingrese un usuario.</strong>' to be 'Ingrese un usuario.' // Object.is equality[39m
+[31m   [31m×[31m LoginComponent[2m > [22mrejects an empty username (undefined) without calling the service[39m[32m 0[2mms[22m[39m
+[31m     → expected '<strong>Ingrese un usuario.</strong>' to be 'Ingrese un usuario.' // Object.is equality[39m
+[31m   [31m×[31m LoginComponent[2m > [22mrejects an empty username () without calling the service[39m[32m 0[2mms[22m[39m
+[31m     → expected '<strong>Ingrese un usuario.</strong>' to be 'Ingrese un usuario.' // Object.is equality[39m
+[31m   [31m×[31m LoginComponent[2m > [22mrejects an empty username (   ) without calling the service[39m[32m 0[2mms[22m[39m
+[31m     → expected '<strong>Ingrese un usuario.</strong>' to be 'Ingrese un usuario.' // Object.is equality[39m
+[31m   [31m×[31m LoginComponent[2m > [22mrejects an empty password (null) without calling the service[39m[32m 0[2mms[22m[39m
+[31m     → expected '<strong>Ingrese una contraseña.</stro…' to be 'Ingrese una contraseña.' // Object.is equality[39m
+[31m   [31m×[31m LoginComponent[2m > [22mrejects an empty password (undefined) without calling the service[39m[32m 0[2mms[22m[39m
+[31m     → expected '<strong>Ingrese una contraseña.</stro…' to be 'Ingrese una contraseña.' // Object.is equality[39m
+[31m   [31m×[31m LoginComponent[2m > [22mrejects an empty password () without calling the service[39m[32m 0[2mms[22m[39m
+[31m     → expected '<strong>Ingrese una contraseña.</stro…' to be 'Ingrese una contraseña.' // Object.is equality[39m
+[31m   [31m×[31m LoginComponent[2m > [22mrejects an empty password (   ) without calling the service[39m[32m 0[2mms[22m[39m
+[31m     → expected '<strong>Ingrese una contraseña.</stro…' to be 'Ingrese una contraseña.' // Object.is equality[39m
+[31m   [31m×[31m LoginComponent[2m > [22mshows the missing-token message when the service reports no authenticated session[39m[32m 0[2mms[22m[39m
+[31m     → expected '<strong>El backend respondió sin toke…' to be 'El backend respondió sin token.' // Object.is equality[39m
+   [32m✓[39m LoginComponent[2m > [22mdoes not expose internal login error details: 'Backend message'[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mdoes not expose internal login error details: 'Transport message'[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mdoes not expose internal login error details: 'Error desconocido'[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22muses preferences supplied by the service without reinterpreting them ({"theme":"light","showTips":true,"compact":false})[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22muses preferences supplied by the service without reinterpreting them ({"theme":"light","showTips":false,"compact":true,"savedOptions":{"notifications":{"enabled":false}}})[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22muses preferences supplied by the service without reinterpreting them ({"theme":null,"showTips":true,"compact":false})[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mrestores busy and shows a public message if navigation fails[32m 0[2mms[22m[39m
+[31m   [31m×[31m LoginComponent[2m > [22mH-03: interpolates message as text in the real template without an innerHTML binding[39m[32m 11[2mms[22m[39m
+[31m     → expected true to be false // Object.is equality[39m
+   [32m✓[39m LoginComponent[2m > [22mrecovers the form after 'backend unavailable' without retrying or navigating[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mrecovers the form after 'CORS rejection' without retrying or navigating[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mrecovers the form after 'login timeout' without retrying or navigating[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mrecovers the form after 'transport timeout' without retrying or navigating[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mrecovers the form after 'HTTP 401' without retrying or navigating[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mrecovers the form after 'HTTP 403' without retrying or navigating[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mrecovers the form after 'HTTP 500' without retrying or navigating[32m 0[2mms[22m[39m
+   [32m✓[39m LoginComponent[2m > [22mrecovers the form after 'storage write failure' without retrying or navigating[32m 0[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 10 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/app/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mrejects an empty username (null) without calling the service
+[41m[1m FAIL [22m[49m src/app/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mrejects an empty username (undefined) without calling the service
+[41m[1m FAIL [22m[49m src/app/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mrejects an empty username () without calling the service
+[41m[1m FAIL [22m[49m src/app/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mrejects an empty username (   ) without calling the service
+[31m[1mAssertionError[22m: expected '<strong>Ingrese un usuario.</strong>' to be 'Ingrese un usuario.' // Object.is equality[39m
+
+Expected: [32m"Ingrese un usuario."[39m
+Received: [31m"[7m<strong>[27mIngrese un usuario.[7m</strong>[27m"[39m
+
+[36m [2m❯[22m src/app/login/login.component.spec.ts:[2m84:31[22m[39m
+    [90m 82| [39m    [35mawait[39m component[33m.[39m[34mlogin[39m()[33m;[39m
+    [90m 83| [39m
+    [90m 84| [39m    [34mexpect[39m(component[33m.[39mmessage)[33m.[39m[34mtoBe[39m([32m'Ingrese un usuario.'[39m)[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m 85| [39m    [34mexpect[39m(authenticate)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m 86| [39m    [34mexpect[39m(navigate)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/app/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mrejects an empty password (null) without calling the service
+[41m[1m FAIL [22m[49m src/app/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mrejects an empty password (undefined) without calling the service
+[41m[1m FAIL [22m[49m src/app/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mrejects an empty password () without calling the service
+[41m[1m FAIL [22m[49m src/app/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mrejects an empty password (   ) without calling the service
+[31m[1mAssertionError[22m: expected '<strong>Ingrese una contraseña.</stro…' to be 'Ingrese una contraseña.' // Object.is equality[39m
+
+Expected: [32m"Ingrese una contraseña."[39m
+Received: [31m"[7m<strong>[27mIngrese una contraseña.[7m</strong>[27m"[39m
+
+[36m [2m❯[22m src/app/login/login.component.spec.ts:[2m97:31[22m[39m
+    [90m 95| [39m    [35mawait[39m component[33m.[39m[34mlogin[39m()[33m;[39m
+    [90m 96| [39m
+    [90m 97| [39m    [34mexpect[39m(component[33m.[39mmessage)[33m.[39m[34mtoBe[39m([32m'Ingrese una contrase\u00f1a.'[39m)[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m 98| [39m    [34mexpect[39m(authenticate)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m 99| [39m    [34mexpect[39m(navigate)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/app/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mshows the missing-token message when the service reports no authenticated session
+[31m[1mAssertionError[22m: expected '<strong>El backend respondió sin toke…' to be 'El backend respondió sin token.' // Object.is equality[39m
+
+Expected: [32m"El backend respondió sin token."[39m
+Received: [31m"[7m<strong>[27mEl backend respondió sin token.[7m</strong>[27m"[39m
+
+[36m [2m❯[22m src/app/login/login.component.spec.ts:[2m111:31[22m[39m
+    [90m109| [39m    [35mawait[39m component[33m.[39m[34mlogin[39m()[33m;[39m
+    [90m110| [39m
+    [90m111| [39m    expect(component.message).toBe('El backend respondi\u00f3 sin toke…
+    [90m   | [39m                              [31m^[39m
+    [90m112| [39m    [34mexpect[39m(navigate)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m113| [39m    [34mexpect[39m(component[33m.[39mbusy)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/app/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mH-03: interpolates message as text in the real template without an innerHTML binding
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2m❯[22m src/app/login/login.component.spec.ts:[2m182:103[22m[39m
+    [90m180| [39m    ))[33m;[39m
+    [90m181| [39m    [34mexpect[39m(messageElement)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m182| [39m    expect(elements.flatMap((element) => element.inputs).some((input) …
+    [90m   | [39m                                                                                                      [31m^[39m
+    [90m183| [39m
+    [90m184| [39m    [35mconst[39m textBindings [33m=[39m messageElement[33m?.[39mchildren[33m.[39m[34mfilter[39m(
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m10 failed[39m[22m[2m | [22m[1m[32m17 passed[39m[22m[90m (27)[39m
+[2m   Start at [22m 17:34:25
+[2m   Duration [22m 842ms[2m (transform 58ms, setup 0ms, collect 298ms, tests 26ms, environment 0ms, prepare 181ms)[22m
+

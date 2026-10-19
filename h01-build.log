@@ -1,0 +1,29 @@
+
+> workshop-login-frontend@0.1.0 build
+> ng build
+
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m  [2m | [22m[1mNames[22m              [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-KOSIMPAC.js[39m    [2m | [22m[2m-[22m                  [2m | [22m[36m221.93 kB[39m[2m | [22m               [36m61.22 kB[39m
+[32mpolyfills-5CFQRCPP.js[39m[2m | [22m[2mpolyfills[22m          [2m | [22m [36m34.59 kB[39m[2m | [22m               [36m11.33 kB[39m
+[32mstyles-6ZHFPUQP.css[39m  [2m | [22m[2mstyles[22m             [2m | [22m  [36m1.47 kB[39m[2m | [22m              [36m636 bytes[39m
+[32mmain-PKOA3ARZ.js[39m     [2m | [22m[2mmain[22m               [2m | [22m[36m637 bytes[39m[2m | [22m              [36m637 bytes[39m
+
+[1m [22m                    [2m | [22m[1mInitial total[22m      [2m | [22m[1m258.62 kB[22m[2m | [22m               [1m73.83 kB[22m
+
+[1mLazy chunk files[22m     [2m | [22m[1mNames[22m              [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-TMFYWIWV.js[39m    [2m | [22m[2m-[22m                  [2m | [22m [36m68.71 kB[39m[2m | [22m               [36m23.54 kB[39m
+[32mchunk-XXBH4L43.js[39m    [2m | [22m[2mlogin-component[22m    [2m | [22m [36m28.73 kB[39m[2m | [22m                [36m7.41 kB[39m
+[32mchunk-S3ICV4BB.js[39m    [2m | [22m[2mdashboard-component[22m[2m | [22m  [36m7.03 kB[39m[2m | [22m                [36m2.52 kB[39m
+
+Application bundle generation complete. [2.899 seconds] - 2026-10-19T22:28:35.323Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mModule 'lodash/merge' used by 'src/app/services/session.service.ts' is not ESM[0m
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: [4mhttps://angular.dev/tools/cli/build#configuring-commonjs-dependencies[0m
+
+[39m[22m
+Output location: C:\Users\Usuario\Documents\T16628-jerson-navarro-huerta\reqflow-workspace\workshop-login-frontend\dist\workshop-login-frontend
+

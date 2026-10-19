@@ -1,0 +1,52 @@
+diff --git a/h01-session-before.ts.txt b/src/app/services/session.service.ts
+index a83f0e1..627320d 100644
+--- a/h01-session-before.ts.txt
++++ b/src/app/services/session.service.ts
+@@ -10,8 +10,19 @@ const SESSION_KEYS = {
+ 
+ @Injectable({ providedIn: 'root' })
+ export class SessionService {
++  private token: string | null = null;
++  private legacyTokenRemoved = false;
++
++  constructor() {
++    try {
++      this.removeLegacyToken();
++    } catch {
++      this.legacyTokenRemoved = false;
++    }
++  }
++
+   getToken(): string | null {
+-    return localStorage.getItem(SESSION_KEYS.token);
++    return this.token;
+   }
+ 
+   getUser(): unknown {
+@@ -30,13 +41,23 @@ export class SessionService {
+   }
+ 
+   saveSession(token: string, user: unknown, preferences: UserPreferences): void {
+-    localStorage.setItem(SESSION_KEYS.token, token);
++    if (!this.legacyTokenRemoved) {
++      this.removeLegacyToken();
++    }
+     localStorage.setItem(SESSION_KEYS.user, String(JSON.stringify(user)));
+     localStorage.setItem(SESSION_KEYS.preferences, String(JSON.stringify(preferences)));
++    this.token = token;
+   }
+ 
+   clearSession(): void {
+-    localStorage.removeItem(SESSION_KEYS.token);
++    this.token = null;
++    this.removeLegacyToken();
+     localStorage.removeItem(SESSION_KEYS.user);
+   }
++
++  private removeLegacyToken(): void {
++    this.legacyTokenRemoved = false;
++    localStorage.removeItem(SESSION_KEYS.token);
++    this.legacyTokenRemoved = true;
++  }
+ }
+\ No newline at end of file

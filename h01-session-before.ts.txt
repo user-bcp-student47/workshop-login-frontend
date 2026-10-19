@@ -1,0 +1,42 @@
+import { Injectable } from '@angular/core';
+import merge from 'lodash/merge';
+import type { UserPreferences } from '../models/api.models';
+
+const SESSION_KEYS = {
+  token: 'workshop_token',
+  user: 'workshop_user',
+  preferences: 'workshop_preferences'
+} as const;
+
+@Injectable({ providedIn: 'root' })
+export class SessionService {
+  getToken(): string | null {
+    return localStorage.getItem(SESSION_KEYS.token);
+  }
+
+  getUser(): unknown {
+    const user: unknown = JSON.parse(localStorage.getItem(SESSION_KEYS.user) || '{}');
+    return user;
+  }
+
+  loadPreferences(): UserPreferences {
+    const defaults: UserPreferences = { theme: 'light', showTips: true, compact: false };
+    try {
+      const saved: unknown = JSON.parse(localStorage.getItem(SESSION_KEYS.preferences) || '{}');
+      return merge(defaults, saved);
+    } catch {
+      return defaults;
+    }
+  }
+
+  saveSession(token: string, user: unknown, preferences: UserPreferences): void {
+    localStorage.setItem(SESSION_KEYS.token, token);
+    localStorage.setItem(SESSION_KEYS.user, String(JSON.stringify(user)));
+    localStorage.setItem(SESSION_KEYS.preferences, String(JSON.stringify(preferences)));
+  }
+
+  clearSession(): void {
+    localStorage.removeItem(SESSION_KEYS.token);
+    localStorage.removeItem(SESSION_KEYS.user);
+  }
+}

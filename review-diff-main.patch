@@ -1,0 +1,260 @@
+diff --git a/package.json b/package.json
+index 698cba6..9c43a1c 100644
+--- a/package.json
++++ b/package.json
+@@ -16,8 +16,8 @@
+     "@angular/forms": "21.2.19",
+     "@angular/platform-browser": "21.2.19",
+     "@angular/router": "21.2.19",
+-    "axios": "0.31.0",
+-    "lodash": "4.17.21",
++    "axios": "1.20.0",
++    "lodash": "4.18.1",
+     "rxjs": "7.8.2",
+     "tslib": "2.8.1",
+     "zone.js": "0.15.1"
+diff --git a/src/app/dashboard/dashboard.component.ts b/src/app/dashboard/dashboard.component.ts
+index 9bdf3bd..cbe62a4 100644
+--- a/src/app/dashboard/dashboard.component.ts
++++ b/src/app/dashboard/dashboard.component.ts
+@@ -1,7 +1,10 @@
+ import { CommonModule } from '@angular/common';
+ import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+ import { Router } from '@angular/router';
+-import axios from 'axios';
++import type { SessionUser, Task } from '../models/api.models';
++import { SessionService } from '../services/session.service';
++import { TasksService } from '../services/tasks.service';
++import { getApiErrorMessage } from '../utils/api-error';
+ import { formatTaskLabel } from '../utils/legacy-format';
+ 
+ const STATUS_LABELS: Record<string, string> = {
+@@ -20,51 +23,55 @@ const STATUS_LABELS: Record<string, string> = {
+   styleUrl: './dashboard.component.css'
+ })
+ export class DashboardComponent implements OnInit {
+-  tasks: any[] = [];
+-  visibleTasks: any[] = [];
+-  user: any = {};
+-  loading: any = true;
+-  error: any = '';
++  tasks: Task[] = [];
++  visibleTasks: Task[] = [];
++  user: SessionUser | null = {};
++  loading = true;
++  error = '';
+ 
+-  constructor(private router: Router, private cdr: ChangeDetectorRef, private zone: NgZone) {}
++  constructor(
++    private router: Router,
++    private cdr: ChangeDetectorRef,
++    private zone: NgZone,
++    private tasksService: TasksService,
++    private session: SessionService
++  ) {}
+ 
+   statusLabel(status: string): string {
+     return STATUS_LABELS[(status || '').toUpperCase()] || status;
+   }
+ 
+   async ngOnInit(): Promise<void> {
+-    const token = localStorage.getItem('workshop_token');
+-    this.user = JSON.parse(localStorage.getItem('workshop_user') || '{}');
+-    if (!token) {
++    const context = this.tasksService.getSession();
++    this.user = this.toUserView(context.user);
++    if (!context.token) {
+       await this.router.navigate(['/login']);
+       return;
+     }
+     try {
+-      const response: any = await axios.get('http://localhost:8000/api/tasks?owner=' + (this.user.username || ''), {
+-        headers: { Authorization: 'Bearer ' + token }
+-      });
+-      const tasks = response.data;
+-      const tmp: any[] = [];
+-      for (let i = 0; i < tasks.length; i++) {
+-        if (tasks[i].status !== 'ARCHIVED') {
+-          tasks[i].label = formatTaskLabel(tasks[i]);
+-          tmp.push(tasks[i]);
++      const tasks = await this.tasksService.getTasks({ owner: String(this.user.username || '') }, context.token);
++      const visibleTasks: Task[] = [];
++      for (const task of tasks) {
++        if (task.status === 'ARCHIVED') {
++          continue;
+         }
++        task.label = formatTaskLabel(task);
++        visibleTasks.push(task);
+       }
+-      tmp.sort((a: any, b: any) => a.priority > b.priority ? -1 : 1);
++      visibleTasks.sort((first, second) => first.priority > second.priority ? -1 : 1);
+       // axios resuelve a veces fuera de la zona de Angular (más aún llegando
+       // por navegación desde el login): forzamos volver a entrar a la zona
+       // y disparamos detectChanges a mano para no depender de que Angular
+       // lo detecte solo.
+       this.zone.run(() => {
+         this.tasks = tasks;
+-        this.visibleTasks = tmp;
++        this.visibleTasks = visibleTasks;
+         this.loading = false;
+         this.cdr.detectChanges();
+       });
+-    } catch (error: any) {
++    } catch (error: unknown) {
+       this.zone.run(() => {
+-        this.error = error?.response?.data?.detail || error?.message || 'No se pudo cargar el dashboard';
++        this.error = getApiErrorMessage(error, 'tasks');
+         this.loading = false;
+         this.cdr.detectChanges();
+       });
+@@ -72,8 +79,20 @@ export class DashboardComponent implements OnInit {
+   }
+ 
+   async logout(): Promise<void> {
+-    localStorage.removeItem('workshop_token');
+-    localStorage.removeItem('workshop_user');
++    this.session.clearSession();
+     await this.router.navigate(['/login']);
+   }
++
++  private toUserView(user: unknown): SessionUser | null {
++    if (user === null) {
++      return null;
++    }
++    if (typeof user !== 'object') {
++      return {};
++    }
++    return {
++      username: 'username' in user ? user.username : undefined,
++      displayName: 'displayName' in user ? user.displayName : undefined
++    };
++  }
+ }
+diff --git a/src/app/login/login.component.ts b/src/app/login/login.component.ts
+index b7cc137..88e10af 100644
+--- a/src/app/login/login.component.ts
++++ b/src/app/login/login.component.ts
+@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
+ import { Component } from '@angular/core';
+ import { FormsModule } from '@angular/forms';
+ import { Router } from '@angular/router';
+-import axios from 'axios';
+-import merge from 'lodash/merge';
++import type { UserPreferences } from '../models/api.models';
++import { AuthService } from '../services/auth.service';
++import { getApiErrorMessage } from '../utils/api-error';
+ 
+ @Component({
+   selector: 'app-login',
+@@ -13,52 +14,38 @@ import merge from 'lodash/merge';
+   styleUrl: './login.component.css'
+ })
+ export class LoginComponent {
+-  username: any = '';
+-  password: any = '';
+-  busy: any = false;
+-  message: any = '';
+-  preferences: any = { theme: 'light', showTips: true, compact: false };
++  username: string | null | undefined = '';
++  password: string | null | undefined = '';
++  busy = false;
++  message = '';
++  preferences: UserPreferences;
+ 
+-  constructor(private router: Router) {
+-    try {
+-      const saved = JSON.parse(localStorage.getItem('workshop_preferences') || '{}');
+-      this.preferences = merge(this.preferences, saved);
+-    } catch (error) {
+-      console.log('Preferences could not be loaded', error);
+-    }
++  constructor(private router: Router, private auth: AuthService) {
++    this.preferences = this.auth.loadPreferences();
+   }
+ 
+   async login(): Promise<void> {
+     this.message = '';
+     if (this.username === null || this.username === undefined || String(this.username).trim() === '') {
+       this.message = '<strong>Ingrese un usuario.</strong>';
+-    } else {
+-      if (this.password === null || this.password === undefined || String(this.password).trim() === '') {
+-        this.message = '<strong>Ingrese una contraseña.</strong>';
+-      } else {
+-        this.busy = true;
+-        try {
+-          const response: any = await axios.post(
+-            'http://localhost:8080/auth/login',
+-            { username: this.username, password: this.password, client: 'angular-workshop' },
+-            { timeout: 5000 }
+-          );
+-          if (response && response.data && response.data.token) {
+-            localStorage.setItem('workshop_token', response.data.token);
+-            localStorage.setItem('workshop_user', JSON.stringify(response.data.user));
+-            localStorage.setItem('workshop_preferences', JSON.stringify(this.preferences));
+-            await this.router.navigate(['/dashboard']);
+-          } else {
+-            this.message = '<strong>El backend respondió sin token.</strong>';
+-          }
+-        } catch (error: any) {
+-          const backendMessage = error?.response?.data?.message || error?.message || 'Error desconocido';
+-          this.message = '<strong>No se pudo autenticar a ' + this.username + '.</strong><br>' + backendMessage;
+-          console.error(error);
+-        } finally {
+-          this.busy = false;
+-        }
++      return;
++    }
++    if (this.password === null || this.password === undefined || String(this.password).trim() === '') {
++      this.message = '<strong>Ingrese una contraseña.</strong>';
++      return;
++    }
++    this.busy = true;
++    try {
++      const authenticated = await this.auth.login(this.username, this.password, this.preferences);
++      if (!authenticated) {
++        this.message = '<strong>El backend respondió sin token.</strong>';
++        return;
+       }
++      await this.router.navigate(['/dashboard']);
++    } catch (error: unknown) {
++      this.message = getApiErrorMessage(error, 'login');
++    } finally {
++      this.busy = false;
+     }
+   }
+ }
+diff --git a/src/app/utils/legacy-format.spec.ts b/src/app/utils/legacy-format.spec.ts
+index 02d2dd3..e9330b9 100644
+--- a/src/app/utils/legacy-format.spec.ts
++++ b/src/app/utils/legacy-format.spec.ts
+@@ -5,4 +5,18 @@ describe('formatTaskLabel', () => {
+   it('formats priority and owner', () => {
+     expect(formatTaskLabel({ priority: 'high', owner: 'student' })).toBe('HIGH · STUDENT');
+   });
++
++  it.each([null, undefined])('returns SIN-DATOS for an absent task (%s)', (task) => {
++    expect(formatTaskLabel(task)).toBe('SIN-DATOS');
++  });
++
++  it.each([
++    { task: {}, expected: 'NORMAL · SIN-ASIGNAR' },
++    { task: { priority: '', owner: '' }, expected: 'NORMAL · SIN-ASIGNAR' },
++    { task: { priority: null, owner: null }, expected: 'NORMAL · SIN-ASIGNAR' },
++    { task: { priority: 'high' }, expected: 'HIGH · SIN-ASIGNAR' },
++    { task: { owner: 'student' }, expected: 'NORMAL · STUDENT' }
++  ])('uses defaults for missing fields: $expected', ({ task, expected }) => {
++    expect(formatTaskLabel(task)).toBe(expected);
++  });
+ });
+diff --git a/src/app/utils/legacy-format.ts b/src/app/utils/legacy-format.ts
+index 64e4e2b..a1ab2df 100644
+--- a/src/app/utils/legacy-format.ts
++++ b/src/app/utils/legacy-format.ts
+@@ -1,4 +1,6 @@
+-export function formatTaskLabel(task: any): string {
++import type { Task } from '../models/api.models';
++
++export function formatTaskLabel(task: Pick<Task, 'priority' | 'owner'> | null | undefined): string {
+   if (!task) {
+     return 'SIN-DATOS';
+   }

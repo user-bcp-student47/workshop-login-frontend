@@ -1,0 +1,16 @@
+diff --git a/h03-login-before.html.txt b/src/app/login/login.component.html
+index af4f30b..73482d9 100644
+--- a/h03-login-before.html.txt
++++ b/src/app/login/login.component.html
+@@ -36,8 +36,8 @@
+       {{ busy ? 'Ingresando...' : 'Ingresar' }}
+     </button>
+ 
+-    <div class="message" *ngIf="message" [innerHTML]="message"></div>
++    <div class="message" *ngIf="message">{{ message }}</div>
+ 
+     <small>Laboratorio local. No utilices credenciales reales.</small>
+   </section>
+-</main>
+\ No newline at end of file
++</main>

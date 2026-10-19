@@ -1,0 +1,95 @@
+diff --git a/h05-spec-before.ts.txt b/src/app/login/login.component.spec.ts
+index 8647c22..a2a0711 100644
+--- a/h05-spec-before.ts.txt
++++ b/src/app/login/login.component.spec.ts
+@@ -15,6 +15,90 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+ import { LoginComponent } from './login.component';
+ import type { AuthService } from '../services/auth.service';
+ import type { UserPreferences } from '../models/api.models';
++import * as ts from 'typescript';
++
++describe('H-05 architecture invariants', () => {
++  const productionFiles = [
++    './login.component.ts',
++    '../dashboard/dashboard.component.ts',
++    '../services/auth.service.ts',
++    '../services/tasks.service.ts',
++    '../services/session.service.ts',
++    '../models/api.models.ts',
++    '../utils/api-error.ts',
++    '../utils/legacy-format.ts',
++    '../../environments/environment.ts'
++  ];
++
++  function readSource(file: string): ts.SourceFile {
++    const content = readFileSync(new URL(file, import.meta.url), 'utf8');
++    return ts.createSourceFile(file, content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
++  }
++
++  function collectNodes(source: ts.Node): ts.Node[] {
++    const nodes: ts.Node[] = [];
++    function visit(node: ts.Node): void {
++      nodes.push(node);
++      ts.forEachChild(node, visit);
++    }
++    visit(source);
++    return nodes;
++  }
++
++  it.each(productionFiles)('has no explicit any in %s', (file) => {
++    const source = readSource(file);
++    const violations = collectNodes(source).filter((node) => node.kind === ts.SyntaxKind.AnyKeyword)
++      .map((node) => source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1);
++
++    expect(violations).toEqual([]);
++  });
++
++  it.each(['./login.component.ts', '../dashboard/dashboard.component.ts'])(
++    'keeps HTTP and browser storage out of component %s', (file) => {
++      const nodes = collectNodes(readSource(file));
++      const directHttpImports = nodes.filter(ts.isImportDeclaration).filter((node) =>
++        ts.isStringLiteral(node.moduleSpecifier)
++        && ['axios', '@angular/common/http'].includes(node.moduleSpecifier.text));
++      const storageReferences = nodes.filter(ts.isIdentifier).filter((node) =>
++        ['localStorage', 'sessionStorage'].includes(node.text));
++
++      expect(directHttpImports).toEqual([]);
++      expect(storageReferences).toEqual([]);
++    }
++  );
++
++  it.each(productionFiles)('keeps URL and session-key literals in their owners in %s', (file) => {
++    const literals = collectNodes(readSource(file)).filter(ts.isStringLiteral);
++    const backendUrls = literals.filter((node) => node.text.startsWith('http://') || node.text.startsWith('https://'));
++    const sessionKeys = literals.filter((node) => node.text.startsWith('workshop_'));
++
++    if (file !== '../../environments/environment.ts') {
++      expect(backendUrls).toEqual([]);
++    }
++    if (file !== '../services/session.service.ts') {
++      expect(sessionKeys).toEqual([]);
++    }
++  });
++
++  it('keeps login validation free of nested if statements', () => {
++    const source = readSource('./login.component.ts');
++    const loginMethod = collectNodes(source).filter(ts.isMethodDeclaration).find((method) =>
++      ts.isIdentifier(method.name) && method.name.text === 'login');
++    expect(loginMethod).toBeDefined();
++    const nestedConditions = collectNodes(loginMethod!).filter(ts.isIfStatement).filter((condition) => {
++      let ancestor = condition.parent;
++      while (ancestor && ancestor !== loginMethod) {
++        if (ts.isIfStatement(ancestor)) {
++          return true;
++        }
++        ancestor = ancestor.parent;
++      }
++      return false;
++    });
++
++    expect(nestedConditions).toEqual([]);
++  });
++});
+ 
+ describe('LoginComponent', () => {
+   let authenticate: ReturnType<typeof vi.fn<AuthService['login']>>;
